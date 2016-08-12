@@ -5,21 +5,26 @@
 VALUE mTembed;
 
 void Init_tembed();
+static VALUE method_call(VALUE module, VALUE path);
 
-static VALUE embed(VALUE module, VALUE path);
+static VALUE embed(const char *path);
 static void fatal();
 
 void Init_tembed()
 {
   mTembed = rb_define_module("Tembed");
-  rb_define_module_function(mTembed, "call", embed, 1);
+  rb_define_module_function(mTembed, "call", method_call, 1);
 }
 
-static VALUE embed(VALUE module, VALUE path)
+static VALUE method_call(VALUE module, VALUE path)
 {
-     char *pathString = StringValueCStr(path);
+  path = rb_funcall(path, rb_intern("to_s"), 0);
+  return embed(StringValueCStr(path));
+}
 
-     FILE * inways = fopen(pathString, "rb+");
+static VALUE embed(const char *path)
+{
+     FILE *inways = fopen(path, "rb+");
 
      if (inways)
      {
@@ -69,7 +74,7 @@ static VALUE embed(VALUE module, VALUE path)
         return Qtrue;
      }
      else {
-        printf("I wasn't able to open the file %s.\n", pathString);
+        printf("Fail to open file: %s\n", path);
         return Qfalse;
      }
 }
