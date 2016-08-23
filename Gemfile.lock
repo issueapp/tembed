@@ -14,7 +14,7 @@ PLATFORMS
   ruby
 
 DEPENDENCIES
-  rake-compiler
+  rake-compiler (~> 1.0)
   tembed!
 
 BUNDLED WITH

@@ -1,2 +1,2 @@
 require 'mkmf'
-create_makefile("tembed")
+create_makefile("native/tembed")
