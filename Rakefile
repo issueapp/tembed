@@ -1,3 +1,7 @@
 require 'rake/extensiontask'
-spec = Gem::Specification.load('tembed.gemspec')
-Rake::ExtensionTask.new('tembed', spec)
+
+gemspec = Gem::Specification.load('tembed.gemspec')
+
+Rake::ExtensionTask.new('tembed', gemspec) do |ext|
+  ext.lib_dir = 'lib/native'
+end

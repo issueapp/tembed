@@ -1,7 +1,7 @@
 PATH
   remote: .
   specs:
-    tembed (0.0.1)
+    tembed (0.0.2)
 
 GEM
   remote: https://rubygems.org/

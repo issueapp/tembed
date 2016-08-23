@@ -12,5 +12,11 @@ Tembed.call '/path/to/font.ttf'
 ## REPL
 
 ```sh
-$ rake compile; irb -r ./lib/tembed.bundle
+$ rake compile; irb -r ./lib/tembed
 ```
+
+## resources
+
+/usr/local/lib/ry/rubies/2.3.0/include/ruby-2.3.0/ruby/ruby.h
+
+gem build tembed.gemspec
