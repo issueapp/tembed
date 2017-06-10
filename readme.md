@@ -6,7 +6,20 @@
 
 ```ruby
 require 'tembed'
-Tembed.call '/path/to/font.ttf'
+
+# override files
+Tembed.call! '/path/to/font.ttf'
+Tembed.call! File.new('/path/to/font.ttf')
+Tembed.call! Pathname('/path/to/font.ttf')
+
+# yield fixed data, but don't override file
+Tembed.call('/path/to/font.ttf') do |data|
+  # write fixed data
+end
+Tembed.call(IO.read('/path/to/font.ttf')) do |data|
+  # write fixed data
+end
+
 ```
 
 ## REPL

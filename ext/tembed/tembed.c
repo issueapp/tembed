@@ -5,7 +5,8 @@
 VALUE mTembed;
 
 void Init_tembed();
-static VALUE method_call(VALUE module, VALUE path);
+static VALUE method_call(VALUE module, VALUE thing);
+static VALUE method_call_bang(VALUE module, VALUE thing);
 
 static VALUE embed(const char *path);
 static void fatal();
@@ -13,13 +14,64 @@ static void fatal();
 void Init_tembed()
 {
   mTembed = rb_define_module("Tembed");
+  rb_define_module_function(mTembed, "call!", method_call_bang, 1);
   rb_define_module_function(mTembed, "call", method_call, 1);
 }
 
-static VALUE method_call(VALUE module, VALUE path)
+static VALUE method_call_bang(VALUE module, VALUE thing)
 {
-  path = rb_funcall(path, rb_intern("to_s"), 0);
-  return embed(StringValueCStr(path));
+  if (rb_respond_to(thing, rb_intern("path")))
+  {
+    thing = rb_funcall(thing, rb_intern("path"), 0);
+  }
+
+  thing = rb_funcall(thing, rb_intern("to_s"), 0);
+
+  return embed(StringValueCStr(thing));
+}
+
+static VALUE method_call(VALUE module, VALUE thing)
+{
+  VALUE tempfile;
+  VALUE basename;
+  VALUE io;
+  VALUE path;
+
+  rb_need_block();
+
+  rb_require("tempfile");
+
+  basename = rb_ary_new();
+  rb_ary_push(basename, rb_str_new_cstr("tembed"));
+  rb_ary_push(basename, rb_str_new_cstr(".ttf"));
+  
+  tempfile = rb_funcall(rb_path2class("Tempfile"), rb_intern("new"), 1, basename);
+
+  path = rb_funcall(tempfile, rb_intern("path"), 0);
+
+  if (rb_type(thing) == T_STRING && ! rb_funcall(thing, rb_intern("start_with?"), 1, rb_str_new_cstr("/")))
+  {
+    io = rb_file_open_str(path, "w");
+    //rb_io_binmode(io);
+    rb_io_ascii8bit_binmode(io);
+    rb_io_write(io, thing);
+  }
+  else
+  {
+    rb_require("fileutils");
+    rb_funcall(rb_path2class("FileUtils"), rb_intern("cp"), 2, thing, path);
+  }
+
+  embed(StringValueCStr(path));
+
+  rb_yield(
+    rb_funcall(tempfile, rb_intern("read"), 0)
+  );
+
+  rb_funcall(tempfile, rb_intern("close"), 0);
+  rb_funcall(tempfile, rb_intern("unlink"), 0);
+
+  return Qnil;
 }
 
 static VALUE embed(const char *path)
