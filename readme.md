@@ -30,6 +30,7 @@ $ rake compile; irb -r ./lib/tembed
 
 ## resources
 
-/usr/local/lib/ry/rubies/2.3.0/include/ruby-2.3.0/ruby/ruby.h
+[ruby.h](https://github.com/ruby/ruby/blob/trunk/include/ruby/ruby.h)
+[c api spec](https://github.com/ruby/spec/tree/master/optional/capi)
 
 gem build tembed.gemspec
